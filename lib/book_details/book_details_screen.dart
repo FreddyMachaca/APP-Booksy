@@ -1,5 +1,7 @@
 import 'package:booksy_app/model/Book.dart';
+import 'package:booksy_app/state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BookDetailsScreen extends StatelessWidget{
   final Book _book;
@@ -16,15 +18,46 @@ class BookDetailsScreen extends StatelessWidget{
           children: [
             BookCoverWidget(_book.coverUrl),
             BookInfoWidget(_book.title,_book.author,_book.description),
-            ElevatedButton(onPressed: (){
-              //agregar accion para el libro
-            },
-            child: const Text("Accion"))
+            BookActionsWidget(_book.id),
           ],
         ),
       ),
     );
   }
+}
+
+class BookActionsWidget extends StatelessWidget{
+  final int bookId;
+  const BookActionsWidget(this.bookId,{Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<BookshelfBloc,BookshelfState>(
+      builder: (context,bookshelfState) {
+        var action=()=>_addToBookshelf(context,bookId);
+        var label="Agregar a mi estante";
+        var color=Colors.green;
+
+        if (bookshelfState.bookIds.contains(bookId)) {
+          action=()=>_removeFromBookshelf(context,bookId);
+          label="Quitar de mi estante";
+          color=Colors.amber;
+        }
+          return ElevatedButton(onPressed: action, child: Text(label),style: ElevatedButton.styleFrom(primary: color),);
+    });
+  }
+
+  void _addToBookshelf(BuildContext context, int bookId) {
+    var bookshelfBloc = context.read<BookshelfBloc>();
+    bookshelfBloc.add(AddBookToBookshelf(bookId));
+  }
+
+  void _removeFromBookshelf(BuildContext context, int bookId) {
+    var bookshelfBloc = context.read<BookshelfBloc>();
+    bookshelfBloc.add(RemoveBookFromBookshelf(bookId));
+  }
+
+
 }
 
 class BookInfoWidget extends StatelessWidget{
