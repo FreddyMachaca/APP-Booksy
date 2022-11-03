@@ -1,29 +1,52 @@
 
 import 'package:booksy_app/book_details/book_details_screen.dart';
 import 'package:booksy_app/model/Book.dart';
+import 'package:booksy_app/services/book_services.dart';
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget{
+class HomeScreen extends StatefulWidget{
   const HomeScreen({Key? key}) : super(key: key);
 
-  final List<Book> _books= const [
-    Book(1, "El señor de los anillos", "J.R.R. Tolkien", "Un anillo para gobernarlos a todos en el universo de hobbit","assets/images/book1.jpg"),
-    Book(2, "El principito", "Antoine de Saint-Exupéry", "Un pequeño príncipe que viaja por el universo","assets/images/book2.jpg"),
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
+  List<Book> _books = [];
 
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _getLastBooks();
+  }
+
+  void _getLastBooks() async{
+    var lastBooks = await BooksService().getLastBook();
+    setState(() {
+      _books = lastBooks;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    var showProgress = _books.isEmpty;
+    var listLength = showProgress ? 3 : _books.length+2;
     return Container(
       margin: const EdgeInsets.all(16),
       child: ListView.builder(
-          itemCount: _books.length+2,
+          itemCount: listLength,
           itemBuilder: (context,index){
             if(index==0){
               return const HeaderWidget();
             }
             if (index==1) {
               return const ListItemHeader();
+            }
+            if(showProgress){
+              return const Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: Center(child: CircularProgressIndicator()),
+              );
             }
             return ListItemBook(_books[index-2]);
        },
@@ -88,6 +111,8 @@ class ListItemBook extends StatelessWidget{
                               .textTheme
                               .headline6!
                               .copyWith(fontSize: 16),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 5,),
                         Text(_book.author,
