@@ -7,7 +7,7 @@ class CategoriesScreen extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return BookCategoriesGrid();
+    return const BookCategoriesGrid();
   }
 
 }
