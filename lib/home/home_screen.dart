@@ -7,7 +7,7 @@ class HomeScreen extends StatelessWidget{
   const HomeScreen({Key? key}) : super(key: key);
 
   final List<Book> _books= const [
-    Book(1, "El señor de los anillos", "J.R.R. Tolkien", "Un anillo para gobernarlos a todos","assets/images/book1.jpg"),
+    Book(1, "El señor de los anillos", "J.R.R. Tolkien", "Un anillo para gobernarlos a todos en el universo de hobbit","assets/images/book1.jpg"),
     Book(2, "El principito", "Antoine de Saint-Exupéry", "Un pequeño príncipe que viaja por el universo","assets/images/book2.jpg"),
 
 
